@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Betting - Wallet Demo</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * { 
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #ffffff;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #1a1a1a;
+            border-right: 1px solid #2a2a2a;
+            padding: 30px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 0 30px 30px 30px;
+            border-bottom: 1px solid #2a2a2a;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h3 {
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand h3 i {
+            background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 30px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(126, 34, 206, 0.1);
+            color: white;
+            border-left-color: #7e22ce;
+        }
+
+        .sidebar-menu a.active {
+            background: rgba(126, 34, 206, 0.2);
+            color: white;
+            border-left-color: #7e22ce;
+        }
+
+        .sidebar-menu a i {
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .container-custom {
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(126, 34, 206, 0.3);
+            border-color: #7e22ce;
+        }
+        
+        .card-header {
+            background: #1a1a1a;
+            color: white;
+            border-bottom: 1px solid #2a2a2a;
+            padding: 20px;
+            font-weight: 600;
+            border-radius: 20px 20px 0 0 !important;
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            border: 2px solid #7e22ce;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(126, 34, 206, 0.2) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .balance-amount {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 8px rgba(126, 34, 206, 0.5);
+            animation: countUp 1s ease-out;
+            color: white;
+        }
+        
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(126, 34, 206, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-card:hover::after { left: 100%; }
+        
+        .quick-action-btn {
+            border-radius: 15px;
+            padding: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(126, 34, 206, 0.4);
+        }
+        
+        .transaction-row {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+        }
+        
+        .transaction-row:hover {
+            background: rgba(126, 34, 206, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .demo-note {
+            background: rgba(126, 34, 206, 0.1);
+            border: 2px solid #7e22ce;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            color: white;
+        }
+        
+        .amount-input-group input {
+            border-radius: 15px;
+            border: 2px solid #2a2a2a;
+            background: #0a0a0a;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .amount-input-group input:focus {
+            border-color: #7e22ce;
+            box-shadow: 0 0 20px rgba(126, 34, 206, 0.4);
+            transform: scale(1.02);
+            background: #0a0a0a;
+            color: white;
+        }
+        
+        .quick-select-btn {
+            border-radius: 15px;
+            border: 2px solid #7e22ce;
+            background: #1a1a1a;
+            color: #7e22ce;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 12px 20px;
+        }
+        
+        .quick-select-btn:hover {
+            background: #7e22ce;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(126, 34, 206, 0.4);
+        }
+        
+        .progress {
+            height: 30px;
+            border-radius: 15px;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #7e22ce 0%, #a855f7 100%);
+            border-radius: 15px;
+            animation: progressGrow 1s ease-out;
+        }
+        
+        @keyframes progressGrow {
+            from { width: 0 !important; }
+        }
+        
+        .metric-box {
+            padding: 20px;
+            text-align: center;
+            border-right: 2px solid #2a2a2a;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-box:hover {
+            background: rgba(126, 34, 206, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .metric-box:last-child { border-right: none; }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .table {
+            color: white;
+        }
+
+        .table thead {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .table thead th {
+            border: none;
+            padding: 15px;
+            font-weight: 600;
+            border-bottom: 2px solid #7e22ce;
+        }
+
+        .table td {
+            border-color: #2a2a2a;
+            vertical-align: middle;
+        }
+        
+        .income-card {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            color: white;
+            border: none;
+        }
+        
+        .expense-card {
+            background: linear-gradient(135deg, #be123c 0%, #f43f5e 100%);
+            color: white;
+            border: none;
+        }
+        
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(126, 34, 206, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(126, 34, 206, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(126, 34, 206, 0.8); }
+        }
+        
+        .view-content {
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .text-white {
+            color: white !important;
+        }
+
+        .text-muted {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        h2.text-white, h5.text-white, h6.text-white {
+            color: white !important;
+        }
+
+        .card-body p {
+            color: white;
+        }
+
+        .alert-info {
+            background: rgba(126, 34, 206, 0.1);
+            border-color: #7e22ce;
+            color: white;
+        }
+
+        .form-text {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        label {
+            color: white;
+        }
+
+        hr.bg-white {
+            background-color: #2a2a2a;
+            height: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar-brand h3 span {
+                display: none;
+            }
+
+            .sidebar-menu a span {
+                display: none;
+            }
+
+            .sidebar-menu a {
+                justify-content: center;
+                padding: 18px 10px;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h3><i class="fas fa-dice"></i> <span>Virtual Betting</span></h3>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#"><i class="fas fa-home"></i> <span>Home</span></a></li>
+            <li><a href="#"><i class="fas fa-calendar-alt"></i> <span>Events</span></a></li>
+            <li><a href="#" class="active" onclick="showView('dashboard')"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="#" onclick="showView('add-funds')"><i class="fas fa-plus-circle"></i> <span>Add Funds</span></a></li>
+            <li><a href="#" onclick="showView('transactions')"><i class="fas fa-history"></i> <span>Transactions</span></a></li>
+            <li><a href="#" onclick="showView('stats')"><i class="fas fa-chart-line"></i> <span>Statistics</span></a></li>
+            <li><a href="#"><i class="fas fa-ticket-alt"></i> <span>My Bets</span></a></li>
+            <li><a href="#"><i class="fas fa-trophy"></i> <span>Leaderboard</span></a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-custom">
+            <div class="demo-note">
+                <strong><i class="fas fa-info-circle"></i> Interactive Demo:</strong> Use the sidebar to explore different wallet views!
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view-content">
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card balance-card text-white">
+                            <div class="card-body text-center p-5" style="position: relative; z-index: 1;">
+                                <h5 class="card-title mb-3 text-white"><i class="fas fa-wallet"></i> Current Balance</h5>
+                                <div class="balance-amount" id="current-balance">$1,247.50</div>
+                                <p class="mt-3 text-white"><small><i class="far fa-clock"></i> Last updated: Dec 20, 2025 14:32</small></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-white"><i class="fas fa-stream"></i> Recent Transactions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Type</th>
+                                                <th>Amount</th>
+                                                <th>Balance</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="transaction-row">
+                                                <td>Dec 20, 14:30</td>
+                                                <td><span class="badge badge-success">Bet Won</span></td>
+                                                <td class="text-success"><strong>+$150.00</strong></td>
+                                                <td>$1,247.50</td>
+                                                <td>Won bet on Lakers vs Warriors</td>
+                                            </tr>
+                                            <tr class="transaction-row">
+                                                <td>Dec 20, 12:15</td>
+                                                <td><span class="badge badge-danger">Bet Placed</span></td>
+                                                <td class="text-danger"><strong>-$50.00</strong></td>
+                                                <td>$1,097.50</td>
+                                                <td>Bet on Lakers vs Warriors</td>
+                                            </tr>
+                                            <tr class="transaction-row">
+                                                <td>Dec 19, 18:45</td>
+                                                <td><span class="badge badge-danger">Bet Lost</span></td>
+                                                <td class="text-danger"><strong>-$75.00</strong></td>
+                                                <td>$1,147.50</td>
+                                                <td>Lost bet on Celtics vs Heat</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Funds View -->
+            <div id="add-funds-view" class="view-content" style="display:none;">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header text-center">
+                                <h4 class="mb-0 text-white"><i class="fas fa-coins"></i> Add Funds to Wallet</h4>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> <strong>Current Balance:</strong> <span id="balance-display">$1,247.50</span>
+                                </div>
+
+                                <div id="success-message" class="alert alert-success" style="display:none;">
+                                    <i class="fas fa-check-circle"></i> <span id="success-text">Funds added successfully!</span>
+                                </div>
+
+                                <form>
+                                    <div class="form-group amount-input-group">
+                                        <label class="font-weight-bold"><i class="fas fa-dollar-sign"></i> Amount to Add</label>
+                                        <input type="number" class="form-control" id="amount-input" value="100.00" step="0.01" min="10" max="10000">
+                                        <small class="form-text text-muted">Between $10 and $10,000</small>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="font-weight-bold"><i class="fas fa-bolt"></i> Quick Select:</label>
+                                        <div class="btn-group d-flex" role="group">
+                                            <button type="button" class="btn quick-select-btn" onclick="setAmount(50)">$50</button>
+                                            <button type="button" class="btn quick-select-btn" onclick="setAmount(100)">$100</button>
+                                            <button type="button" class="btn quick-select-btn" onclick="setAmount(250)">$250</button>
+                                            <button type="button" class="btn quick-select-btn" onclick="setAmount(500)">$500</button>
+                                            <button type="button" class="btn quick-select-btn" onclick="setAmount(1000)">$1000</button>
+                                        </div>
+                                    </div>
+
+                                    <hr style="border-color: #2a2a2a;">
+
+                                    <button type="button" class="btn btn-success btn-lg btn-block quick-action-btn btn-glow" onclick="addFunds()">
+                                        <i class="fas fa-plus-circle"></i> Add Funds Now
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-block quick-action-btn" onclick="showView('dashboard')">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions View -->
+            <div id="transactions-view" class="view-content" style="display:none;">
+                <h2 class="text-white"><i class="fas fa-history"></i> Transaction History</h2>
+                <hr class="bg-white">
+
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card stat-card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted">Balance</h6>
+                                <h3 class="metric-value text-white" id="trans-balance">$1,247.50</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted">Deposits</h6>
+                                <h3 class="metric-value text-success">$1,250</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted">Bets</h6>
+                                <h3 class="metric-value text-danger">$275</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card text-center">
+                            <div class="card-body">
+                                <h6 class="text-muted">Total</h6>
+                                <h3 class="metric-value text-white">24</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <h5 class="mb-0 text-white">All Transactions</h5>
+                        <button class="btn btn-outline-light btn-sm" onclick="showView('dashboard')">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Balance</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="transaction-row">
+                                        <td>#24</td>
+                                        <td>Dec 20, 14:30</td>
+                                        <td><span class="badge badge-success">Bet Won</span></td>
+                                        <td class="text-success"><strong>+$150.00</strong></td>
+                                        <td>$1,247.50</td>
+                                        <td>Won bet on Lakers vs Warriors</td>
+                                    </tr>
+                                    <tr class="transaction-row">
+                                        <td>#23</td>
+                                        <td>Dec 20, 12:15</td>
+                                        <td><span class="badge badge-danger">Bet Placed</span></td>
+                                        <td class="text-danger"><strong>-$50.00</strong></td>
+                                        <td>$1,097.50</td>
+                                        <td>Bet on Lakers vs Warriors</td>
+                                    </tr>
+                                    <tr class="transaction-row">
+                                        <td>#22</td>
+                                        <td>Dec 19, 18:45</td>
+                                        <td><span class="badge badge-danger">Bet Lost</span></td>
+                                        <td class="text-danger"><strong>-$75.00</strong></td>
+                                        <td>$1,147.50</td>
+                                        <td>Lost on Celtics vs Heat</td>
+                                    </tr>
+                                    <tr class="transaction-row">
+                                        <td>#21</td>
+                                        <td>Dec 18, 10:00</td>
+                                        <td><span class="badge badge-success">Deposit</span></td>
+                                        <td class="text-success"><strong>+$250.00</strong></td>
+                                        <td>$1,297.50</td>
+                                        <td>Manual deposit</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics View -->
+            <div id="stats-view" class="view-content" style="display:none;">
+                <h2 class="text-white"><i class="fas fa-chart-line"></i> Wallet Statistics</h2>
+                <hr class="bg-white">
+
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card balance-card text-white stat-card">
+                            <div class="card-body text-center p-4">
+                                <h6 class="text-white">Balance</h6>
+                                <h2 class="metric-value" id="stats-balance">$1,247.50</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card income-card text-white stat-card">
+                            <div class="card-body text-center p-4">
+                                <h6>Net Profit</h6>
+                                <h2 class="metric-value">+$122.50</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card expense-card text-white stat-card">
+                            <div class="card-body text-center p-4">
+                                <h6>Win Rate</h6>
+                                <h2 class="metric-value">55.56%</h2>
+                                <small>5 wins / 9 bets</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card stat-card">
+                            <div class="card-header income-card">
+                                <h5 class="mb-0"><i class="fas fa-arrow-up"></i> Income</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Deposits:</strong> <span class="float-right text-success">$1,250.00</span></p>
+                                <p><strong>Bets Won:</strong> <span class="float-right text-success">$500.00</span></p>
+                                <p><strong>Refunds:</strong> <span class="float-right text-warning">$50.00</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card stat-card">
+                            <div class="card-header expense-card">
+                                <h5 class="mb-0"><i class="fas fa-arrow-down"></i> Expenses</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Bets Placed:</strong> <span class="float-right text-danger">$450.00</span></p>
+                                <p><strong>Bets Lost:</strong> <span class="float-right text-danger">$177.50</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-white">Performance</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 metric-box">
+                                <div class="metric-value text-white">9</div>
+                                <p class="text-muted">Total Bets</p>
+                            </div>
+                            <div class="col-md-3 metric-box">
+                                <div class="metric-value text-success">5</div>
+                                <p class="text-muted">Won</p>
+                            </div>
+                            <div class="col-md-3 metric-box">
+                                <div class="metric-value text-danger">4</div>
+                                <p class="text-muted">Lost</p>
+                            </div>
+                            <div class="col-md-3 metric-box">
+                                <div class="metric-value text-success">27%</div>
+                                <p class="text>
