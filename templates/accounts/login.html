@@ -1,0 +1,27 @@
+
+{% extends 'base.html' %} {% block content %}
+<div style="max-width: 400px; margin: auto; padding-top: 50px;">
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" style="width: 100%; padding: 10px;">Login</button>
+    </form>
+    <p>New here? <a href="{% url 'signup' %}">Create Account</a></p>
+</div>
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4 card bg-dark text-light p-4 mt-5 border-secondary">
+        <h2 class="text-center mb-4">Create Account</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success w-100 mt-3">Register & Claim 2K</button>
+        </form>
+        <p class="text-center mt-3 small">Already have an account? <a href="{% url 'login' %}" class="text-success">Login</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %} {% block content %}
+<style>
+    body { background-color: #121212; color: white; font-family: sans-serif; }
+    .auth-container { max-width: 400px; margin: 100px auto; padding: 20px; border: 1px solid #333; border-radius: 8px; background: #1e1e1e; }
+    input { width: 100%; padding: 10px; margin: 10px 0; background: #2c2c2c; border: 1px solid #444; color: white; }
+    button { width: 100%; padding: 12px; background: #00c853; border: none; color: white; font-weight: bold; cursor: pointer; }
+</style>
+
+<div class="auth-container">
+    <h2>Join the Action</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Sign Up Now</button>
+    </form>
+    <p style="font-size: 0.8em; text-align: center;">By signing up, you agree to the Terms.</p>
+</div>
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4 card bg-dark text-light p-4 mt-5 border-secondary">
+        <h2 class="text-center mb-4">Create Account</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success w-100 mt-3">Register & Claim 2K</button>
+        </form>
+        <p class="text-center mt-3 small">Already have an account? <a href="{% url 'login' %}" class="text-success">Login</a></p>
+    </div>
+</div>
+{% endblock %}
