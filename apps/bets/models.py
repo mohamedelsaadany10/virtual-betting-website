@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings  
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 from decimal import Decimal
@@ -43,10 +43,10 @@ class Bet(models.Model):
     
     # Core Fields
     user = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='bets'
-    )
+    settings.AUTH_USER_MODEL, 
+    on_delete=models.CASCADE, 
+    related_name='bets'
+)
     event = models.ForeignKey(
         Event, 
         on_delete=models.CASCADE, 

@@ -13,8 +13,8 @@ class WalletAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['reference_number', 'wallet', 'transaction_type', 'amount', 'status', 'created_at']
+    list_display = ['reference_id', 'wallet', 'transaction_type', 'amount', 'status', 'created_at']
     list_filter = ['transaction_type', 'status', 'created_at']
-    search_fields = ['reference_number', 'wallet__user__username', 'description']
-    readonly_fields = ['id', 'reference_number', 'created_at']
+    search_fields = ['reference_id', 'wallet__user__username', 'description']
+    readonly_fields = ['id', 'reference_id', 'created_at']
     date_hierarchy = 'created_at'
